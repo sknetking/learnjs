@@ -1,0 +1,721 @@
+<html>
+<head>
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+/* Add padding to containers */
+.container {
+  padding: 16px;
+  background-color: white;
+}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Overwrite default styles of hr */
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+/* Set a style for the submit button */
+.registerbtn,.loginBTN {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}  
+.registerbtn:hover {
+  opacity: 1;
+}
+.ppcard {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+  display: none;
+}
+.logoutbtn{
+    border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: rgb(255, 5, 5);
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+.ccbutton {
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+/* Add a blue text color to links */
+a {
+  color: dodgerblue;
+}
+
+/* Set a grey background color and center the text of the "sign in" section */
+.signin {
+  background-color: #f1f1f1;
+  text-align: center;
+}
+</style>
+
+</head>
+   <body> 
+
+    <div class="ppcard">
+        <h2 style="text-align:center">User Profile Card</h2>
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgEJByjx_Ts7QO_3-Q7_x32vuCYRSl7dxyl_ff0Tc6gTzvW-OHKlibSwbVk4P-Zmeys95zZQMqa9PyLmOGIkSHgbi36Wd63zFxZbvKJGBNB8QvMy0wKigF3jYz_8VS_gLUjuLuefC_LJWwFFMbC0g0gjusY-fIPTJbxOnwBpRhzRU4l1-VIzOXFUI6K/s400/IMG_20210213_223135_414.jpg" alt="Shyam" style="width:100%;height:200px;">
+      <h3 id="wname"></h3>
+      <p class="title">CEO & Founder</p>
+      <p>Harvard University</p>
+     
+      <p><button class="ccbutton">Contact</button></p>
+      <button class="logoutbtn">Logout</button>
+    </div>
+    
+
+
+
+
+<form id="loginForm">
+    <h1>Login Form</h1>
+<label for="lemail"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" id="lemail" required>
+
+    <label for="lpsw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="lpsw" id="lpsw" required>
+ <button type="button" class="loginBTN" id='submit_login'>Login</button>
+  <div class="container signin">
+    <p>Already have no account? <button id='show_re_form'>SingUP Now</button>.</p>
+  </div>
+
+</form>
+<form id='registrationform' method="post">
+  <div class="container">
+    <h1>Register</h1>
+    <p>Please fill in this form to create an account.</p>
+    <hr>
+<label for="username"><b>User name</b></label>
+    <input type="text" placeholder="Enter username" name="username" id="username" required>
+    <label for="email"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" id="email" required>
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" id="password" required>
+
+    <label for="psw-repeat"><b>Repeat Password</b></label>
+    <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw_repeat" required>
+    <hr>
+    <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
+    <div class="error" style="color:red;"></div>
+    <button type="button" class="registerbtn">Register</button>
+  </div>
+  
+  <div class="container signin">
+    <p>Already have an account? <button id='login'>Sign in</button>.</p>
+  </div>
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+     $("#loginForm").hide();
+     $('#wname').html(localStorage.getItem('username'));
+     if(localStorage.getItem('username')!=null)
+     {
+        $("#registrationform").hide();
+         $(".ppcard").hide();
+         $("#loginForm").show();
+     }
+
+     if(sessionStorage.getItem("session_login")!=null)
+     {
+        $("#loginForm").hide();
+        $("#registrationform").hide();
+         $(".ppcard").show();
+         
+     }
+      
+     $("#login").click(function(){
+		$("#loginForm").show();
+        $("#registrationform").hide();
+        });
+
+        $(".logoutbtn").click(function(){    
+            $("#loginForm").show();
+            $(".ppcard").hide();
+            sessionStorage.removeItem("session_login");
+            $("#registrationform").hide();
+        });
+        
+//login as user after registration - 
+$('#submit_login').click(function(){
+    let lemail = $("#lemail").val();
+    let lpass = $("#lpsw").val();
+    if(localStorage.getItem("email")==lemail){
+        if(localStorage.getItem("pass")==lpass)
+        {
+            $("#registrationform").hide();
+         $(".ppcard").show();
+         $("#loginForm").hide();
+         sessionStorage.setItem("session_login",email);
+        }
+        else{
+            alert("wrong password!");
+        }
+    }
+        else{
+            alert("Your not a registerd user! or E-mail not match!");
+        }
+    
+});
+
+
+
+   $("#show_re_form").click(function(){
+		$("#loginForm").hide();
+        $("#registrationform").show();
+        
+  });
+
+  
+
+  $(".registerbtn").click(function(){
+       event.preventDefault();
+    let username = $("#username").val();
+     let email = $("#email").val();
+     let pass = $("#password").val();
+     let re_pass = $("#psw_repeat").val();
+       
+      if(username !="" && email!='' && pass == re_pass && pass!="")
+     {    
+          localStorage.setItem("username",username);
+          localStorage.setItem("email",email);
+          localStorage.setItem("pass",pass);
+          sessionStorage.setItem("session_login",email);   
+        $("#registrationform").hide();
+         $(".ppcard").show();
+         $('#wname').html('Welcome '+username);
+    
+      }else{
+   		$(".error").html("somthing went worng please full fill form!"+pass+re_pass);
+        }
+   
+  });
+
+});
+</script>		
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+/* Add padding to containers */
+.container {
+  padding: 16px;
+  background-color: white;
+}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Overwrite default styles of hr */
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+/* Set a style for the submit button */
+.registerbtn,.loginBTN {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}  
+.registerbtn:hover {
+  opacity: 1;
+}
+.ppcard {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+  display: none;
+}
+.logoutbtn{
+    border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: rgb(255, 5, 5);
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+.ccbutton {
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+/* Add a blue text color to links */
+a {
+  color: dodgerblue;
+}
+
+/* Set a grey background color and center the text of the "sign in" section */
+.signin {
+  background-color: #f1f1f1;
+  text-align: center;
+}
+</style>
+
+
+    
+
+    <div class="ppcard">
+        <h2 style="text-align:center">User Profile Card</h2>
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgEJByjx_Ts7QO_3-Q7_x32vuCYRSl7dxyl_ff0Tc6gTzvW-OHKlibSwbVk4P-Zmeys95zZQMqa9PyLmOGIkSHgbi36Wd63zFxZbvKJGBNB8QvMy0wKigF3jYz_8VS_gLUjuLuefC_LJWwFFMbC0g0gjusY-fIPTJbxOnwBpRhzRU4l1-VIzOXFUI6K/s400/IMG_20210213_223135_414.jpg" alt="Shyam" style="width:100%;height:200px;">
+      <h3 id="wname"></h3>
+      <p class="title">CEO & Founder</p>
+      <p>Harvard University</p>
+     
+      <p><button class="ccbutton">Contact</button></p>
+      <button class="logoutbtn">Logout</button>
+    </div>
+    
+
+
+
+
+<form id="loginForm">
+    <h1>Login Form</h1>
+<label for="lemail"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" id="lemail" required>
+
+    <label for="lpsw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="lpsw" id="lpsw" required>
+ <button type="button" class="loginBTN" id='submit_login'>Login</button>
+  <div class="container signin">
+    <p>Already have no account? <button id='show_re_form'>SingUP Now</button>.</p>
+  </div>
+
+</form>
+<form id='registrationform' method="post">
+  <div class="container">
+    <h1>Register</h1>
+    <p>Please fill in this form to create an account.</p>
+    <hr>
+<label for="username"><b>User name</b></label>
+    <input type="text" placeholder="Enter username" name="username" id="username" required>
+    <label for="email"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" id="email" required>
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" id="password" required>
+
+    <label for="psw-repeat"><b>Repeat Password</b></label>
+    <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw_repeat" required>
+    <hr>
+    <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
+    <div class="error" style="color:red;"></div>
+    <button type="button" class="registerbtn">Register</button>
+  </div>
+  
+  <div class="container signin">
+    <p>Already have an account? <button id='login'>Sign in</button>.</p>
+  </div>
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+     $("#loginForm").hide();
+     $('#wname').html(localStorage.getItem('username'));
+     if(localStorage.getItem('username')!=null)
+     {
+        $("#registrationform").hide();
+         $(".ppcard").hide();
+         $("#loginForm").show();
+     }
+
+     if(sessionStorage.getItem("session_login")!=null)
+     {
+        $("#loginForm").hide();
+        $("#registrationform").hide();
+         $(".ppcard").show();
+         
+     }
+      
+     $("#login").click(function(){
+		$("#loginForm").show();
+        $("#registrationform").hide();
+        });
+
+        $(".logoutbtn").click(function(){    
+            $("#loginForm").show();
+            $(".ppcard").hide();
+            sessionStorage.removeItem("session_login");
+            $("#registrationform").hide();
+        });
+        
+//login as user after registration - 
+$('#submit_login').click(function(){
+    let lemail = $("#lemail").val();
+    let lpass = $("#lpsw").val();
+    if(localStorage.getItem("email")==lemail){
+        if(localStorage.getItem("pass")==lpass)
+        {
+            $("#registrationform").hide();
+         $(".ppcard").show();
+         $("#loginForm").hide();
+         sessionStorage.setItem("session_login",email);
+        }
+        else{
+            alert("wrong password!");
+        }
+    }
+        else{
+            alert("Your not a registerd user! or E-mail not match!");
+        }
+    
+});
+
+
+
+   $("#show_re_form").click(function(){
+		$("#loginForm").hide();
+        $("#registrationform").show();
+        
+  });
+
+  
+
+  $(".registerbtn").click(function(){
+       event.preventDefault();
+    let username = $("#username").val();
+     let email = $("#email").val();
+     let pass = $("#password").val();
+     let re_pass = $("#psw_repeat").val();
+       
+      if(username !="" && email!='' && pass == re_pass && pass!="")
+     {    
+          localStorage.setItem("username",username);
+          localStorage.setItem("email",email);
+          localStorage.setItem("pass",pass);
+          sessionStorage.setItem("session_login",email);   
+        $("#registrationform").hide();
+         $(".ppcard").show();
+         $('#wname').html('Welcome '+username);
+    
+      }else{
+   		$(".error").html("somthing went worng please full fill form!"+pass+re_pass);
+        }
+   
+  });
+
+});
+</script>					<style>
+
+* {
+  box-sizing: border-box;
+}
+
+/* Add padding to containers */
+.container {
+  padding: 16px;
+  background-color: white;
+}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Overwrite default styles of hr */
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+/* Set a style for the submit button */
+.registerbtn,.loginBTN {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}  
+.registerbtn:hover {
+  opacity: 1;
+}
+.ppcard {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+  display: none;
+}
+.logoutbtn{
+    border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: rgb(255, 5, 5);
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+.ccbutton {
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+/* Add a blue text color to links */
+a {
+  color: dodgerblue;
+}
+
+/* Set a grey background color and center the text of the "sign in" section */
+.signin {
+  background-color: #f1f1f1;
+  text-align: center;
+}
+</style>
+
+
+    
+
+    <div class="ppcard">
+        <h2 style="text-align:center">User Profile Card</h2>
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgEJByjx_Ts7QO_3-Q7_x32vuCYRSl7dxyl_ff0Tc6gTzvW-OHKlibSwbVk4P-Zmeys95zZQMqa9PyLmOGIkSHgbi36Wd63zFxZbvKJGBNB8QvMy0wKigF3jYz_8VS_gLUjuLuefC_LJWwFFMbC0g0gjusY-fIPTJbxOnwBpRhzRU4l1-VIzOXFUI6K/s400/IMG_20210213_223135_414.jpg" alt="Shyam" style="width:100%;height:200px;">
+      <h3 id="wname"></h3>
+      <p class="title">CEO & Founder</p>
+      <p>Harvard University</p>
+     
+      <p><button class="ccbutton">Contact</button></p>
+      <button class="logoutbtn">Logout</button>
+    </div>
+    
+
+
+
+
+<form id="loginForm">
+    <h1>Login Form</h1>
+<label for="lemail"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" id="lemail" required>
+
+    <label for="lpsw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="lpsw" id="lpsw" required>
+ <button type="button" class="loginBTN" id='submit_login'>Login</button>
+  <div class="container signin">
+    <p>Already have no account? <button id='show_re_form'>SingUP Now</button>.</p>
+  </div>
+
+</form>
+<form id='registrationform' method="post">
+  <div class="container">
+    <h1>Register</h1>
+    <p>Please fill in this form to create an account.</p>
+    <hr>
+<label for="username"><b>User name</b></label>
+    <input type="text" placeholder="Enter username" name="username" id="username" required>
+    <label for="email"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" id="email" required>
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" id="password" required>
+
+    <label for="psw-repeat"><b>Repeat Password</b></label>
+    <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw_repeat" required>
+    <hr>
+    <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
+    <div class="error" style="color:red;"></div>
+    <button type="button" class="registerbtn">Register</button>
+  </div>
+  
+  <div class="container signin">
+    <p>Already have an account? <button id='login'>Sign in</button>.</p>
+  </div>
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+     $("#loginForm").hide();
+     $('#wname').html(localStorage.getItem('username'));
+     if(localStorage.getItem('username')!=null)
+     {
+        $("#registrationform").hide();
+         $(".ppcard").hide();
+         $("#loginForm").show();
+     }
+
+     if(sessionStorage.getItem("session_login")!=null)
+     {
+        $("#loginForm").hide();
+        $("#registrationform").hide();
+         $(".ppcard").show();
+         
+     }
+      
+     $("#login").click(function(){
+		$("#loginForm").show();
+        $("#registrationform").hide();
+        });
+
+        $(".logoutbtn").click(function(){    
+            $("#loginForm").show();
+            $(".ppcard").hide();
+            sessionStorage.removeItem("session_login");
+            $("#registrationform").hide();
+        });
+        
+//login as user after registration - 
+$('#submit_login').click(function(){
+    let lemail = $("#lemail").val();
+    let lpass = $("#lpsw").val();
+    if(localStorage.getItem("email")==lemail){
+        if(localStorage.getItem("pass")==lpass)
+        {
+            $("#registrationform").hide();
+         $(".ppcard").show();
+         $("#loginForm").hide();
+         sessionStorage.setItem("session_login",email);
+        }
+        else{
+            alert("wrong password!");
+        }
+    }
+        else{
+            alert("Your not a registerd user! or E-mail not match!");
+        }
+    
+});
+
+
+
+   $("#show_re_form").click(function(){
+		$("#loginForm").hide();
+        $("#registrationform").show();
+        
+  });
+
+  
+
+  $(".registerbtn").click(function(){
+       event.preventDefault();
+    let username = $("#username").val();
+     let email = $("#email").val();
+     let pass = $("#password").val();
+     let re_pass = $("#psw_repeat").val();
+       
+      if(username !="" && email!='' && pass == re_pass && pass!="")
+     {    
+          localStorage.setItem("username",username);
+          localStorage.setItem("email",email);
+          localStorage.setItem("pass",pass);
+          sessionStorage.setItem("session_login",email);   
+        $("#registrationform").hide();
+         $(".ppcard").show();
+         $('#wname').html('Welcome '+username);
+    
+      }else{
+   		$(".error").html("somthing went worng please full fill form!"+pass+re_pass);
+        }
+   
+  });
+
+});
+</script>					
+
+</body>
+</html>
